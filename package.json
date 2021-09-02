@@ -11,12 +11,12 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scalezio/ede-tasks.git"
+    "url": ""
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/scalezio/ede-tasks/issues"
+    "url": ""
   },
-  "homepage": "https://github.com/scalezio/ede-tasks#readme"
+  "homepage": ""
 }

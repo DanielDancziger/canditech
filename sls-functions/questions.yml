@@ -1,20 +1,13 @@
-questions:
-  handler: src.functions.questions.questions_handler.handle
+get_question:
+  handler: src.functions.get_question_handler.handle
   memorySize: 256
   timeout: 30
-
   environment:
     QUESTIONS_TABLE: ${self:custom.questionsTable}
   events:
     - http:
-        path: questions
+        path: questions/{questionId}
         method: get
-    - http:
-        path: questions/{question_id}
-        method: get
-    - http:
-        path: questions
-        method: post
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -30,5 +23,58 @@ questions:
       Action:
         - dynamodb:*
       Resource: '*'
-  layers:
-        - {Ref: PythonRequirementsLambdaLayer}
+get_question_review:
+  handler: src.functions.get_question_review_handler.handle
+  memorySize: 256
+  timeout: 30
+  environment:
+    QUESTIONS_TABLE: ${self:custom.questionsTable}
+  events:
+    - http:
+        path: questions/review/{questionId}
+        method: get
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cloudwatch:*
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: '*'
+get_answer:
+  handler: src.functions.get_answer_handler.handle
+  memorySize: 256
+  timeout: 30
+
+  environment:
+    ANSWERS_TABLE: ${self:custom.answersTable}
+    QUESTIONS_TABLE: ${self:custom.questionsTable}
+  events:
+    - http:
+        path: answers/{answerId}
+        method: get
+    - http:
+        path: candidate/answers/{candidateId}/{questionId}
+        method: get
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cloudwatch:*
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: '*'

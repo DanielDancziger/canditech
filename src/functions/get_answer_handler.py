@@ -10,14 +10,14 @@ def handle(event, context):
     print(f'Event:\n{event}')
     path_params = event.get("pathParameters", {}) or {}
 
-    if "answer_id" not in path_params or not ("question_id" in path_params and "candidate_id" in path_params):
+    if "answerId" not in path_params or not ("questionId" in path_params and "candidateId" in path_params):
         return {
             "statusCode": 401,
             "body": json.dumps({"message": "Missing question id"})
         }
-    question_id = path_params.get("question_id", None)
-    answer_id = path_params.get("answer_id", None)
-    candidate_id = path_params.get("answer_id", None)
+    question_id = path_params.get("questionId", None)
+    answer_id = path_params.get("answerId", None)
+    candidate_id = path_params.get("candidateId", None)
     answered_question = Init.view.get_answered_question(answer_id=answer_id, candidate_id=candidate_id,
                                                         question_id=question_id)
     return {

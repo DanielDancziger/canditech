@@ -6,6 +6,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: answerId
           AttributeType: S
+        - AttributeName: candidateId
+          AttributeType: S
+        - AttributeName: questionId
+          AttributeType: S
       KeySchema:
         - AttributeName: answerId
           KeyType: HASH

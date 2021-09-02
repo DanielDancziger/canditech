@@ -13,12 +13,6 @@ provider:
     SERVICE_NAME: ${self:service}
     ENV: ${self:provider.stage}
     AWS_ACCOUNT: !Ref AWS::AccountId
-    SNS_THREAD_MANAGER_TOPIC: ${cf:connectors-${self:provider.stage}.SnsThreadManagerTopic}
-  apiKeys:
-    - name: ${self:service}-${self:provider.stage}-key
-      description: thread-manager api key
-  apiGateway:
-    apiKeySourceType: HEADER
 
 package:
   exclude:
