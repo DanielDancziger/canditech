@@ -1,0 +1,57 @@
+# serverless deploy --stage dev --region us-east-1
+service: canditech
+
+provider:
+  name: aws
+  stackTags:
+    service: ${self:service}
+  stage: ${opt:stage, 'dev'}
+  runtime: python3.7
+  region: us-east-1
+  environment:
+    REPORT_METRICS: false
+    SERVICE_NAME: ${self:service}
+    ENV: ${self:provider.stage}
+    AWS_ACCOUNT: !Ref AWS::AccountId
+    SNS_THREAD_MANAGER_TOPIC: ${cf:connectors-${self:provider.stage}.SnsThreadManagerTopic}
+  apiKeys:
+    - name: ${self:service}-${self:provider.stage}-key
+      description: thread-manager api key
+  apiGateway:
+    apiKeySourceType: HEADER
+
+package:
+  exclude:
+    - '*'
+    - '!src/**'
+    - '**/*.pyc'
+    - 'node_modules/**'
+    - '.venv/**'
+    - '.idea/**'
+    - '.github/**'
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+
+custom:
+  questionsTable: ${self:service}-${self:provider.stage}-questions_table
+  answersTable: ${self:service}-${self:provider.stage}-answers_table
+  candidateAnswerIndexName: CandidateQuestionIndex
+  pythonRequirements:
+    dockerizePip: false
+    noDeploy:
+      - boto3
+    usePipenv: true
+
+
+
+functions:
+  - ${file(sls-functions/questions.yml)}
+
+
+resources:
+  - ${file(sls-resources/dynamodb-questions.yml)}
+  - ${file(sls-resources/dynamodb-answers.yml)}
+

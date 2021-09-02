@@ -1,0 +1,29 @@
+Resources:
+  AnswersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.answersTable}
+      AttributeDefinitions:
+        - AttributeName: answerId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: answerId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ${self:custom.candidateAnswerIndexName}
+          KeySchema:
+            - AttributeName: candidateId
+              KeyType: HASH
+            - AttributeName: questionId
+              KeyType: RANGE
+          Projection:
+              ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  AnswersTableName:
+    Description: The name of the table
+    Value: !Ref AnswersTable
+  AnswersTableArn:
+    Description: The Arn of the table
+    Value: !GetAtt AnswersTable.Arn

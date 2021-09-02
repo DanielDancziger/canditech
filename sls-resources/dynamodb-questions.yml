@@ -1,0 +1,20 @@
+Resources:
+  QuestionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.questionsTable}
+      AttributeDefinitions:
+        - AttributeName: questionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: questionId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  QuestionsTableName:
+    Description: The name of the table
+    Value: !Ref QuestionsTable
+  QuestionsTableArn:
+    Description: The Arn of the table
+    Value: !GetAtt QuestionsTable.Arn
