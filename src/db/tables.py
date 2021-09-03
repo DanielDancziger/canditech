@@ -26,7 +26,7 @@ class QuestionTypes:
 
 
 class AnswerTable:
-    TABLE_NAME = os.getenv('QUESTIONS_TABLE', f'{service_name}-{env}-answers_table')
+    TABLE_NAME = os.getenv('ANSWERS_TABLE', f'{service_name}-{env}-answers_table')
     CANDIDATE_INDEX = os.getenv('CANDIDATE_INDEX', f'CandidateQuestionIndex')
     ANSWER_ID = "answerId"
     METADATA = "metadata"

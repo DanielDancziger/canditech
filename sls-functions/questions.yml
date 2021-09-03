@@ -31,7 +31,7 @@ get_question_review:
     QUESTIONS_TABLE: ${self:custom.questionsTable}
   events:
     - http:
-        path: questions/review/{questionId}
+        path: questions/{questionId}/review
         method: get
   iamRoleStatements:
     - Effect: Allow
@@ -61,7 +61,10 @@ get_answer:
         path: answers/{answerId}
         method: get
     - http:
-        path: candidate/answers/{candidateId}/{questionId}
+        path: candidate/{candidateId}/answers/question/{questionId}
+        method: get
+    - http:
+        path: candidate/{candidateId}/answers
         method: get
   iamRoleStatements:
     - Effect: Allow

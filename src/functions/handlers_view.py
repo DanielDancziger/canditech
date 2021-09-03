@@ -30,26 +30,41 @@ class HandlersView:
         return self.question_service.get_question_by_id(question_id=question_id)
 
     def get_answered_question(self, answer_id=None, candidate_id=None, question_id=None):
-        if not answer_id or not (candidate_id and question_id):
+        if not answer_id and not candidate_id:
             raise Exception("Missing relevant parameters AnswerId or CandidateId+QuestionId")
-        if answer_id:
-            answer_row = self.answer_service.get_answer_by_id(answer_id=answer_id)
-            question_id = answer_row.get(AnswerTable.QUESTION_ID, None)
+        if answer_id or (candidate_id and question_id):
+            if answer_id:
+                answer_row = self.answer_service.get_answer_by_id(answer_id=answer_id)
+                question_id = answer_row.get(AnswerTable.QUESTION_ID, None)
+            else:
+                answer_row = self.answer_service.get_answer_by_candidate_question(candidate_id=candidate_id,
+                                                                                  question_id=question_id)
+            question_row = self.question_service.get_question_by_id(question_id=question_id)
+            return self.map_answer_and_question(answer=answer_row, question=question_row)
         else:
-            answer_row = self.answer_service.get_answer_by_candidate_question(candidate_id=candidate_id,
-                                                                              question_id=question_id)
+            answers = self.answer_service.get_answers_by_candidate(candidate_id=candidate_id)
+            return self.map_answers(answers=answers)
 
-        question_row = self.question_service.get_question_by_id(question_id=question_id)
-        if QuestionTypes.VALUE == question_row.get(QuestionsTable.QUESTION_TYPE):
-            return get_answered_question_value(answer=answer_row, question=question_row)
-        elif QuestionTypes.MULTIPLE_CHOICE == question_row.get(QuestionsTable.QUESTION_TYPE):
-            return get_answered_question_multiple_choice(answer=answer_row, question=question_row)
+    def map_answers(self, answers):
+        mapped_answers = []
+        for answer in answers:
+            question_id = answer.get(AnswerTable.QUESTION_ID, None)
+            question_row = self.question_service.get_question_by_id(question_id=question_id)
+            mapped_answers.append(self.map_answer_and_question(answer=answer, question=question_row))
+        return mapped_answers
+
+    @staticmethod
+    def map_answer_and_question(answer, question):
+        if not answer:
+            raise Exception("Missing answer")
+        if not question:
+            raise Exception("Missing question for this answer")
+        if QuestionTypes.VALUE == question.get(QuestionsTable.QUESTION_TYPE):
+            return get_answered_question_value(answer=answer, question=question)
+        elif QuestionTypes.MULTIPLE_CHOICE == question.get(QuestionsTable.QUESTION_TYPE):
+            return get_answered_question_multiple_choice(answer=answer, question=question)
         else:
-            return get_answered_question_open_text(question=question_row, answer=answer_row)
-
-
-
-
+            return get_answered_question_open_text(question=question, answer=answer)
 
 
 

@@ -126,7 +126,7 @@ class DynamoDBService:
             query["Index"] = index
         response = self.table.get_item(**query)
         if "Item" in response:
-            return response["Item"]
+            return self.convert_from_dynamodb(response["Item"])
         return None
 
     def put_item(self, item):
